@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* 페이지 스타일 */
+        .page-weekly {
+            font-family: Arial, sans-serif;
+            background-color: #F8F9FA;
+            font-size: 14px;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 조회 폼 스타일 */
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #1F4EF5;
+            background-color: #F8F9FA;
+            color: #1F4EF5;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #1F4EF5;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #002A8E;
+        }
+
+        /* 테이블 스타일 */
+        .table-container {
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto 20px auto;
+            border-collapse: collapse;
+            text-align: center;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #1F4EF5;
+            font-size: 14px;
+            padding: 5px; /* 여백을 넓히기 위해 padding 추가 */
+        }
+
+        th {
+            background-color: #1F4EF5;
+            color: white;
+        }
+
+        td {
+            background-color: #F8F9FA;
+        }
+
+        .day-header {
+            background-color: #1F4EF5;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        /* 반응형 디자인 */
+        @media screen and (max-width: 768px) {
+            .form-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="page-weekly">
+    <!-- 제목 -->
+    <h1>{{ title }}</h1>
+
+    <!-- 조회 폼 -->
+    <div class="form-container">
+        <form method="post" action="/weekly">
+            <select name="month">
+                {% for i in range(1, 13) %}
+                    <option value="{{ i }}" {% if i == selected_month %}selected{% endif %}>{{ i }}월</option>
+                {% endfor %}
+            </select>
+            <select name="week">
+                {% for i in range(1, 6) %}
+                    <option value="{{ i }}" {% if i == selected_week %}selected{% endif %}>{{ i }}주차</option>
+                {% endfor %}
+            </select>
+            <button type="submit">조회</button>
+        </form>
+        <a href="/"><button>홈으로</button></a>
+    </div>
+    
+
+    <!-- 주간 출석부 -->
+    <div class="table-container">
+        <table>
+            <!-- 테이블 헤더 -->
+            <tr>
+                <th rowspan="2">No.</th>
+                <th rowspan="2">이름</th>
+                <th colspan="3" class="day-header">월요일</th>
+                <th colspan="3" class="day-header">화요일</th>
+                <th colspan="3" class="day-header">수요일</th>
+                <th colspan="3" class="day-header">목요일</th>
+                <th colspan="3" class="day-header">금요일</th>
+            </tr>
+            <tr>
+                {% for day in range(5) %}
+                <th>출근</th>
+                <th>퇴근</th>
+                <th>시간</th>
+                {% endfor %}
+            </tr>
+            <!-- 테이블 데이터 -->
+            {% for idx, (student_name, days) in enumerate(week_data.items(), 1) %}
+            <tr>
+                <td>{{ idx }}</td>
+                <td>{{ student_name }}</td>
+                {% if days %}
+                    {% for day in days.values() %}
+                    <td>{{ day["출근"] or "-" }}</td>
+                    <td>{{ day["퇴근"] or "-" }}</td>
+                    <td>{{ day["근무시간"] or "-" }}</td>
+                    {% endfor %}
+                {% else %}
+                    <td colspan="15">-</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+
+
+        </table>
+    </div>
+
+    <!-- 근무 시간 순위 -->
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>순위</th>
+                <th>이름</th>
+                <th>총 출근 시간</th>
+            </tr>
+            {% for rank, (student_name, total_time) in enumerate(ranked_hours, 1) %}
+            <tr>
+                <td>{{ rank }}</td>
+                <td>{{ student_name }}</td>
+                <td>{{ total_time }} 시간</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

@@ -1,17 +1,28 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출석 프로그램</title>
+    <title>출석 시스템</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>출석 기록</h1>
-    <form action="/submit" method="post">
-        <label for="name">이름:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">출석 기록</button>
-    </form>
+    <div class="container">
+        <h1>출석 시스템</h1>
+        <p class="date-text">{{ formatted_date }}</p> <!-- 회색 작은 글씨 -->
+        <p class="time-text">{{ current_time }}</p> <!-- AM/PM 형태 -->
+        <form action="/record" method="post">
+            <label for="student_id" style="font-size: 16px; color: #1A1E27;">학번:</label>
+            <input type="text" id="student_id" name="student_id" class="rounded-box" required>
+            <br><br>
+            <button class="check-in" name="action" value="check_in">출근</button>
+            <button class="check-out" name="action" value="check_out">퇴근</button>
+        </form>
+        <br>
+        <a href="/manage_holidays">
+            <button>공휴일 관리</button>
+        </a>
+        <a href="/weekly">
+            <button>출석부 확인</button>
+        </a>
+    </div>
 </body>
 </html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPUD 2025-1 출석부</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- 제목 -->
+        <h1>IPUD 2025-1 출석부</h1>
+
+        <!-- 현재 날짜와 시간 -->
+        <p class="date">{{ date }}</p>
+        <p class="time">{{ time }}</p>
+
+        <!-- 메시지 표시 -->
+        {% if message %}
+        <p class="{{ 'success-message' if '추가되었습니다' in message else 'error-message' }}">
+            {{ message|safe }}
+        </p>
+        {% endif %}
+
+
+        <!-- 학번 입력 및 버튼 -->
+        <form action="/record" method="post">
+            <div class="input-container">
+                <input type="text" id="student_id" name="student_id" placeholder="학번을 입력하세요" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" class="blue-button" name="action" value="check_in">출근</button>
+                <button type="submit" class="blue-button" name="action" value="check_out">퇴근</button>
+            </div>
+        </form>
+
+        <!-- 출석부 확인 버튼 -->
+        <div class="attendance-button">
+            <a href="/weekly"><button class="white-button">출석부 확인</button></a>
+        </div>
+    </div>
+
+    <!-- 공휴일 관리 링크 -->
+    <div class="holiday-link-container">
+        <a href="/manage_holidays" class="holiday-link">공휴일 관리</a>
+    </div>
+</body>
+</html>
